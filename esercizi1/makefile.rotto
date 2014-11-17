@@ -1,0 +1,14 @@
+CC=gcc
+CFLAGS = -ansi -pedantic -Wall -g
+
+all: Main
+
+clean:
+	rm ./*.o
+
+Main: Main.o PathFinding.o
+	$(CC) $(CFLAGS) -o Main Main.c PathFinding.o
+
+PathFinding.o: PathFinding.c PathFinding.h
+	$(CC) $(CFLAGS) PathFinding.c PathFinding.h
+

@@ -1,0 +1,19 @@
+CC=gcc
+
+all: Main
+
+clean:
+	rm ./*.o
+
+Main: Main.o PathFinding.o
+
+PathFinding.o: PriorityQueue.o Hash.o List.o PathFinding.c PathFinding.h
+
+PriorityQueue.o: PriorityQueue.c PriorityQueue.h
+
+Main.o: Main.c
+
+Hash.o: Hash.c Hash.h
+
+List.o: List.h List.c
+
