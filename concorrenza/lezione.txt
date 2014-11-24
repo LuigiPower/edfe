@@ -1,0 +1,156 @@
+typedef dir = { nord, sud};
+
+monitor Bridge
+{
+   dir dircor;       //Verso corrente di percorrenza
+   condition coda;   //condition coda per le auto sospese
+   int in_coda;      //contatore auto in coda
+   int nauto;        //contatore auto
+
+   Bridge(...) {...}
+
+   procedure entry entra(dir d)
+   {
+      if((dircor != d) && (nauto != 0))
+      {
+         in_coda++;
+         coda.wait();
+      }
+      dircor = d;
+      nauto++;
+   }
+
+   procedure entry esci(dir d)
+   {
+      nauto--;
+
+      if(nauto == 0)
+      {
+         while(in_coda > 0)
+         {
+            in_coda--;
+            coda.signal();
+         }
+      }
+   }
+}
+
+monitor Allocatore
+{
+   boolean occupata = false;
+   condition[] attesaRisorsa = new Condition[T];
+   int[] inAttesa = new int[T];
+
+   Allocatore()
+   {
+      for(int i = 0; i < N; i++)
+      {
+         inAttesa[i] = 0;
+      }
+   }
+
+   procedure entry richiesta(int tempo)
+   {
+      if(occupata)
+      {
+         inAttesa[tempo-1]++;
+         attesaRisorsa[tempo-1].wait();
+      }
+      occupata = true;
+   }
+
+   procedure entry rilascio()
+   {
+      occupato = false;
+      for(int i = 0; i < T; i++)
+      {
+         if(inAttesa[i] > 0)
+         {
+            inAttesa[i]--;
+            attesaRisorsa[i].signal();
+            break;
+         }
+      }
+   }
+
+   /**
+   * QUESTA SOLUZIONE DA LUOGO A STARVATION!
+   * Si risolve con tecniche di aging, per aumentare
+   * priorita' di alcuni processi (ad esempio)
+   */
+}
+
+L'ASCENSORE
+
+const N = ...;
+typedef piano = 1...N;
+typedef dir = { su, giu };
+
+monitor monitorElevator
+{
+   piano pianocor;
+   dir dircor;
+   int in_attesa[piano][2];
+   int attesa_arrivo[piano];
+   condition c_su[piano], c_giu[piano], c_arr[piano];
+
+   procedure entry chiamataPiano(piano partenza, piano arrivo)
+   {
+      dir mydir;
+      if(arrivo > partenza)
+      {
+         mydir = su;
+      }
+      else
+      {
+         mydir = giu;
+      }
+      if(arrivo != partenza)
+      {
+         if((partenza != pianocor) || (mydir != dircor))
+         {
+            if(mydir == su)
+            {
+               in_attesa[partenza, su]++;
+               ...
+            }
+            ...
+         }
+      }
+   }
+
+   procedure entry muoviAscensore()
+   {
+      while(attesa_arrivo{pianocor] > 0)
+      {
+         c_arr[pianocor].signal();
+         attesa_arrivo[painocor]--;
+      }
+
+      if(dircor == su)
+      {
+         while(in_attesa[pianocor, su] > 0)
+         {
+            c_su[pianocor].signal();
+            in_attesa[pianocor, su]--;
+         }
+      }
+      else
+      {
+         while(in_attesa[pianocor, giu] > 0)
+         {
+            c_giu[pianocor].signal();
+            in_attesa[pianocor, giu]--;
+         }
+      }
+   }
+}
+
+Storage System
+
+politica di accesso:
+   Processi M non possono accedere contemporaneamente a processi B
+   da una stessa workstation non posso avere processi B e R contemporaneamente
+      assumo al max 1 processo di un certo tipo per workstation
+
+   implementare una soluzione(usando i monitor) per modellare lo storage system e l'interazione tra i processi
