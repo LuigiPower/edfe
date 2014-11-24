@@ -4,7 +4,7 @@
 
 void start(Monitor* m, int mdir)
 {
-   if(fork())
+   if(vfork())
    {
 
    }
@@ -12,9 +12,11 @@ void start(Monitor* m, int mdir)
    {
       int dir = mdir;
 
-      printf("Cerco di entrare in %d\n", dir);
+      printf("\nCerco di entrare in %d\n", dir);
       entra(m, dir);
+      printf("ENTRATO\n");
       sleep(2);
+      printf("USCITO\n");
       esci(m, dir);
       printf("Uscito in %d\n", dir);
       exit(0);
