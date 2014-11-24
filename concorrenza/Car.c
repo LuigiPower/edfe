@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void start(Monitor* m)
+void start(Monitor* m, int mdir)
 {
    if(fork())
    {
@@ -10,7 +10,7 @@ void start(Monitor* m)
    }
    else
    {
-      int dir = 0;
+      int dir = mdir;
 
       printf("Cerco di entrare in %d\n", dir);
       entra(m, dir);

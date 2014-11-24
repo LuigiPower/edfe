@@ -3,5 +3,5 @@
 #include "Bridge.h"
 #include <unistd.h>
 
-void start(Monitor* m);
+void start(Monitor* m, int dir);
 #endif
